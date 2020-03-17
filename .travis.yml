@@ -1,27 +1,24 @@
 env:
   global:
-    - CC_TEST_REPORTER_ID=0c3d66981ffe822da6a04e932ec9a08126441e19f89efd6a1c680295594a7776
-
+  - CC_TEST_REPORTER_ID=0c3d66981ffe822da6a04e932ec9a08126441e19f89efd6a1c680295594a7776
+  - secure: QMx8cXXaGjIcwLINY34EkTDy8llgRp32zSeAziGWAUbQndYlI1oafQpdKNGADrhhymiC+/YL8Q8xIvs46pSotwTbpNoYpYkqapRTW56Ev9WYS0W2KAqFuk4GGW7jt0sW3Nt25jZZOztsu6frbqhuxovzgv51u2FF43nKmP5nBQxBVs1YTiX0zM63j0/MLkXK++DvXMiUWyKSQP88zFM9aGE1ykg/tUyS+ia5VtOpsmZW1evtD+eztXQGCT9GO0AxhA35Rmlh3m96/WWe/byS78zu75ILvPaWyZEyGcX1XwHf/2c6ZY8+1q5VfH/v3iBc0i6881E3wr2AmNFvBQ5po464MbEJVmmyxEFl4CuKchW5p7csVO9H7BRP4PIW9+MD16zpVWLx6UDPaql8BzUdj+43IWk0HZoQjw29ntNCJW8wLF/I0dtJJ5h7qv3gfaPuESPkYjF3ZdEDwgmjoGavrwk8lpZBZhD7sDXNWYDes35DgiyUdEQxeWBtkuYePfDxZUx4I3TYSoSY61qCxGMEILr8wQJCNpSF4czqCnwNlu8WdPMAo2Z+HQleVbjzQr9PfrwKH1DYdx/PiIC0R9faWoDYu+nP9TmxoUutHnFgtZe46g/uLV58eISzYHIU1YoOq6zyJUG2Iz8m96c95mWoVNfx1dRe0oPM+ZLksoy501g=
 language: php
 php:
-    - 7.2
-    - 7.3
-
+- 7.2
+- 7.3
 services:
-  - postgresql
-
-before_script: 
-  - cp .env.travis .env
-  - psql -c 'create database homestead_test;'
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-  - php artisan migrate
-
+- postgresql
+before_script:
+- cp .env.travis .env
+- psql -c 'create database homestead_test;'
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- "./cc-test-reporter before-build"
+- php artisan key:generate
+- php artisan migrate
 install:
-  - make install
-
+- make install
 script: make lint test
-
-after_script: 
-  - ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT
+after_script:
+- "./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT"
