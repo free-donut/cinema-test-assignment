@@ -36,4 +36,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function orders()
+    {
+        // У заказа меного билетов
+        // hasMany определяется у модели, имеющей внешние ключи в других таблицах
+        return $this->hasMany('App\Order');
+    }
 }
