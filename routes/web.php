@@ -44,11 +44,10 @@ Route::get('/orders', 'OrderController@create')
 Route::post('/orders', 'OrderController@store')
     ->name('orders.store');
 
-Route::get('/users/create', 'UserController@create')
-    ->name('users.create');
+Auth::routes();
 
-Route::post('/users', 'UserController@store')
-    ->name('users.store');
+Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/users/{user}', 'UserController@show')
-    ->name('users.show');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

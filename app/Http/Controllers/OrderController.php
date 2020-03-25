@@ -85,8 +85,8 @@ class OrderController extends Controller
             $ticket->order()->associate($order);
             $ticket->save();
         }
-        DB::table('tickets')->insert($selectedTickets);
-        /*
+        /*DB::table('tickets')->insert($selectedTickets);
+        
         $tickets = $showtime->tickets()->make($selectedTickets);
         $tickets->save();
         $tickets->order()->associate($order);
