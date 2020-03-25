@@ -1,5 +1,4 @@
-<!-- Stored in resources/views/index.blade.php -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 @extends('layouts.app')
 
 @section('title', 'Page Title')
@@ -9,6 +8,7 @@
 @endsection
 
 @section('content')
+<div class="container">
     <p>List of films</p>
     <table class="table">
         <thead>
@@ -31,5 +31,5 @@
         </tbody>
     </table>
     {{ $films->links() }}
-
+</div>
 @endsection
