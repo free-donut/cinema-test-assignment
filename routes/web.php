@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Film;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +15,40 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->name('home');
+
+/*Route::get('/', 'HomePageController@index')
+    ->name('home');
+*/
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contacts', function () {
+    return view('contacts');
+})->name('contacts');
+
+Route::get('/films', 'FilmController@index')
+    ->name('films.index');
+
+Route::get('/films/{id}', 'FilmController@show')
+    ->name('films.show');
+
+Route::get('/showtimes', 'ShowtimeController@index')
+    ->name('showtimes.index');
+
+Route::get('/orders', 'OrderController@create')
+    ->name('orders.create');
+
+Route::post('/orders', 'OrderController@store')
+    ->name('orders.store');
+
+Route::get('/users/create', 'UserController@create')
+    ->name('users.create');
+
+Route::post('/users', 'UserController@store')
+    ->name('users.store');
+
+Route::get('/users/{user}', 'UserController@show')
+    ->name('users.show');
