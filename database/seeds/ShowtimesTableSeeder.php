@@ -16,9 +16,9 @@ class ShowtimesTableSeeder extends Seeder
         $end->modify('+ 7 days');
         $interval = new DateInterval('P1D');
         $daterange = new DatePeriod($begin, $interval, $end);
-        $dates = array_map(function($date) {
+        $dates = array_map(function ($date) {
             return $date->format("Y-m-d");
-        }, iterator_to_array($daterange)); 
+        }, iterator_to_array($daterange));
 
         $times = ['07:00', '11:00', '15:00', '19:00', '23:00'];
         foreach ($dates as $date) {

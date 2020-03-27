@@ -58,7 +58,7 @@ class OrderController extends Controller
         $order_id = $order->id;
 
         $price = 200;
-        $params = array_map(function($checkbox) use ($price, $showtime_id, $order_id) {
+        $params = array_map(function ($checkbox) use ($price, $showtime_id, $order_id) {
             [$row, $seat] = explode('-', $checkbox);
             return compact('row', 'seat', 'price', 'showtime_id', 'order_id');
         }, $checkboxes);

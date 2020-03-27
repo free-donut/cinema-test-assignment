@@ -5,28 +5,28 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Film;
+use App\User;
 
-class FilmTest extends TestCase
+class HomeTest extends TestCase
 {
     use RefreshDatabase;
-
+    
     /**
      * A basic feature test example.
      *
      * @return void
      */
+
     public function testIndex()
     {
-        $this->seed();
-        $response = $this->get(route('films.index'));
-        $response->assertStatus(200);
+        $response = $this->get(route('home'));
+        $response->assertStatus(302);
     }
 
-    public function testShow()
+    public function testHomePage()
     {
-        $film = factory(Film::class)->create();
-        $response = $this->get(route('films.show', ['id' => $film->id]));
+        $user = factory(User::class)->create();
+        $response = $this->actingAs($user)->get(route('homePage'));
         $response->assertStatus(200);
     }
 }
