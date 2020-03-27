@@ -15,9 +15,6 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            // Поле которое будет внешним ключом
-            $table->string('amount', 6);
-            // Добавление внешнего ключа (ограничения)
             $table->bigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             

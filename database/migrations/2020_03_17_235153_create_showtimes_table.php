@@ -15,8 +15,8 @@ class CreateShowtimesTable extends Migration
     {
         Schema::create('showtimes', function (Blueprint $table) {
             $table->id();
-            $table->string('date', 15);
-            $table->string('time', 5);
+            $table->date('date');
+            $table->time('time');
             // Поле которое будет внешним ключом
             $table->bigInteger('film_id');
             // Добавление внешнего ключа (ограничения)
