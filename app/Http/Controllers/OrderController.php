@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Order;
 use App\Ticket;
 use App\Showtime;
@@ -11,93 +12,62 @@ use App\Showtime;
 class OrderController extends Controller
 {
 
-    // Вывод формы
-    private function getSeats($nbSeat)
+    public function create(Request $request)
     {
-        $seats = range(1, $nbSeat);
-        $result = [];
-        foreach ($seats as $seat) {
-            $result[$seat] = false;
+        if (!Auth::user()) {
+            $request->session()->flash('warning', 'Для покупки билетов зайдите в личный кабиент');
+            return redirect()
+                ->route('login');
         }
-        return $result;
-    }
 
-    private function getTickets($nbRow, $nbSeat, $soldTickets = [])
-    {
-        $rows = range(1, $nbRow);
-        $seats = $this->getSeats($nbSeat);
-        $tickets = [];
-        foreach ($rows as $row) {
-            $tickets[$row] = $seats;
+        if (!$request->showtime_id) {
+            abort(404);
         }
+
+        $showtime = Showtime::findOrFail($request->showtime_id);
+        session(['showtime_id' => $showtime->id]);
+
+        $soldTickets = $showtime->tickets()->select('row', 'seat')->get()->toArray();
+        $seatsCount = 12;
+        $seats = array_fill(1, $seatsCount, false);
+        $rowsCount = 8;
+        $tickets = array_fill(1, $rowsCount, $seats);
+
         foreach ($soldTickets as $soldTicket) {
             $tickets[$soldTicket['row']][$soldTicket['seat']] = true;
         }
-        return $tickets;
-    }
 
-    public function create(Request $request)
-    {
-        $nbRow = 8;
-        $nbSeat = 12;
-        $showtime_id = $request->showtime_id;
-        $soldTickets = Ticket::select('row', 'seat')->where('showtime_id', $showtime_id)->get()->toArray();
-        $tickets = $this->getTickets($nbRow, $nbSeat, $soldTickets);
-        $checkboxes = [];
-        if (!empty($request->checkbox)) {
-            $checkboxes = $request->checkbox;
-        }
-        session(['showtime_id' => $showtime_id]);
-        /*var_dump($checkboxes);
-        $selectedTickets = array_map(function($checkbox) {
-            [$row, $seat] = explode('-', $checkbox);
-            return ['row' => $row, 'seat' => $seat];
-        }, $checkboxes);
-        var_dump($selectedTickets);*/
-        // Передаём в шаблон вновь созданный объект. Он нужен для вывода формы через Form::model
-        $order = new Order();
-        $order->showtime_id = $showtime_id;
-        return view('orders.create', compact('order','tickets', 'showtime_id'));
+        return view('orders.create', compact('tickets'));
     }
 
     public function store(Request $request)
     {
-       if (!empty($request->checkbox)) {
-            $checkboxes = $request->checkbox;
-        }
-        
-        $order = new Order();
-        $order->amount = '1000';
-        $order->user_id = $request->user_id ?? 1;
-        $order->save();
-
-
         $showtime_id = $request->session()->get('showtime_id');
-        $showtime = Showtime::find($showtime_id);
+        $request->session()->forget('showtime_id');
 
-        $selectedTickets = array_map(function($checkbox) {
-            [$showtime_id, $row, $seat] = explode('-', $checkbox);
-            return ['row' => $row, 'seat' => $seat, 'price' => '100'];
-        }, $checkboxes);
-
-        foreach ($selectedTickets as $params) {
-            $ticket = $showtime->tickets()->make($params);
-            $ticket->order()->associate($order);
-            $ticket->save();
+        if (!empty($request->checkbox)) {
+            $checkboxes = $request->checkbox;
+        } else {
+            $request->session()->flash('warning', 'Выберите билеты!');
+            return redirect()->route('orders.create', compact('showtime_id'));
         }
-        /*DB::table('tickets')->insert($selectedTickets);
-        
-        $tickets = $showtime->tickets()->make($selectedTickets);
-        $tickets->save();
-        $tickets->order()->associate($order);
-        $tickets->save();
- 
-        $selectedTickets = array_map(function($checkbox) {
-            [$showtime_id, $row, $seat] = explode('-', $checkbox);
-            return ['row' => $row, 'seat' => $seat, 'price' => '100', 'showtime_id' => $showtime_id];
+               
+        $order = new Order();
+        $order->user_id = Auth::id();
+        $order->save();
+        $order_id = $order->id;
+
+        $price = 200;
+        $params = array_map(function($checkbox) use ($price, $showtime_id, $order_id) {
+            [$row, $seat] = explode('-', $checkbox);
+            return compact('row', 'seat', 'price', 'showtime_id', 'order_id');
         }, $checkboxes);
-        DB::table('tickets')->insert($selectedTickets);*/
+
+        Ticket::insert($params);
+        $amount = $order->tickets()->sum('price');
+        $count = $order->tickets()->count();
+        $request->session()->flash('status', "Билеты забронированы! Количество билетов: $count. Сумма заказа : $amount");
         return redirect()
-            ->route('showtimes.index');
+            ->route('homePage');
     }
 }

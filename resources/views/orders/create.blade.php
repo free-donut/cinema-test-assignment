@@ -17,9 +17,15 @@
   @endforeach
 @endif
 
+@if (Session::has('warning'))
+  <div class="row justify-content-center">
+    <div class="alert alert-warning" role="alert">
+      {{ session('warning') }}
+    </div>
+  </div>
+@endif
 
 <h2>Схема зала</h2>
-
 
 {{ Form::open(['url' => route('orders.store')]) }}
     @foreach ($tickets as $row => $seats)
@@ -29,9 +35,9 @@
           <div class="col-auto" class="custom-control custom-checkbox" >
             <div class="custom-control custom-checkbox">
               @if ($sold)
-                {{ Form::checkbox("checkbox[]", "$showtime_id-$row-$seat", true, ['class' => "custom-control-input", 'id' => "$row$seat", 'disabled']) }}
+                {{ Form::checkbox("checkbox[]", "$row-$seat", true, ['class' => "custom-control-input", 'id' => "$row$seat", 'disabled']) }}
               @else
-                {{ Form::checkbox("checkbox[]", "$showtime_id-$row-$seat", false, ['class' => "custom-control-input", 'id' => "$row$seat"]) }}
+                {{ Form::checkbox("checkbox[]", "$row-$seat", false, ['class' => "custom-control-input", 'id' => "$row$seat"]) }}
               @endif
               {{ Form::label("$row$seat", $seat, ['class' => 'custom-control-label']) }}
             </div>
@@ -39,16 +45,8 @@
         @endforeach
       </div>
     @endforeach
-
-    <div class="col-sm-3 my-1">
-      {{Form::text('name', 'Имя', ['class' => 'form-control'])}}
-    </div>
-    <div class="col-sm-3 my-1">
-      {{Form::text('phone', 'Телефон', ['class' => 'form-control'])}}
-    </div>
-    {{Form::hidden('showtime_id', $showtime_id)}}
      <div class="col-auto my-1">
-      <button type="submit" class="btn btn-primary">Выбрать</button>
+      {{ Form::submit('Купи нас!', ['class' => 'btn btn-primary']) }}
     </div>
 {{ Form::close() }}
 </div>

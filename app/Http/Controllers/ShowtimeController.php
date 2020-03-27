@@ -10,12 +10,15 @@ class ShowtimeController extends Controller
 {
     public function index()
     {
-
         $dates = Showtime::pluck('date')->unique()->toArray();
-        $showtimes = [];
+        
+        $fullShowtimes = [];
         foreach ($dates as $date) {
-            $showtimes[$date] = Showtime::where('date', $date)->orderBy('time')->get();
+            $fullShowtimes[$date] = Showtime::where('date', $date)->orderBy('time')->get();
         }
-       return view('showtimes.index', compact('dates', 'showtimes'));
+        $date = date('Y-m-d', time());
+        $time = date('H:i', time());
+        $filteredShowtimes = Showtime::where('date', $date)->where('time', '>=', $time)->get();
+        return view('showtimes.index', compact('dates', 'fullShowtimes'));
     }
 }

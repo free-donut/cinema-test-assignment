@@ -14,13 +14,8 @@ use App\Film;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', 'HomeController@home')->name('homePage');
 
-/*Route::get('/', 'HomePageController@index')
-    ->name('home');
-*/
 Route::get('/about', function () {
     return view('about');
 })->name('about');
@@ -43,10 +38,6 @@ Route::get('/orders', 'OrderController@create')
 
 Route::post('/orders', 'OrderController@store')
     ->name('orders.store');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
 

@@ -11,11 +11,11 @@
     <h2>Расписание сеансов</h2>
 
         <div>
-            @foreach ($showtimes as $date => $showtimes)
+            @foreach ($fullShowtimes as $date => $dayShowtimes)
             <h3> {{ $date }} </h3>
                 <dl class="row">
 
-                @foreach ($showtimes as $showtime)
+                @foreach ($dayShowtimes as $showtime)
                     <dt class="col-sm-3">{{ $showtime->time }} : <a href="{{route('films.show', ['id' => $showtime->film->id])}}" class="card-link">{{ $showtime->film->name }}</a></dt>
                     <dd class="col-sm-9">
                         <a href="{{route('orders.create', ['showtime_id' => $showtime->id])}}" class="btn btn-primary" class="card-link">Купить билет</a>
